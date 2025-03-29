@@ -72,7 +72,7 @@ while true; do
         echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${RED} ❖ Sorry brother, Your IP not register.${NC}"
         echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${PINK} ❖ Please Contact Dev : @SaputraTech.${NC}"
+        echo -e "${PINK} ❖ Please Contact Dev : @FRosi46.${NC}"
         rm -f /root/wiki # Ganti dengan path yang sesuai ke file installer
         exit 1
     fi
@@ -509,7 +509,7 @@ fi
 chown www-data:www-data "$domainSock_dir"
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
 # Instal Xray Core versi 1.8.24
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
 wget -O /etc/xray/config.json "${REPO}SKT-Fitur/config.json" >/dev/null 2>&1
 wget -O /etc/systemd/system/runn.service "${REPO}SKT-Tools/runn.service" >/dev/null 2>&1
 
@@ -596,7 +596,7 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 #######################################################################################
 clear
 
-wget raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Tools/limit.sh && chmod +x limit.sh && ./limit.sh
+wget https://raw.githubusercontent.com/Panwas89/vpnscrpt/main/SKT-Tools/limit.sh && chmod +x limit.sh && ./limit.sh
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}SKT-Tools/limit-ip"
 chmod +x /usr/bin/*
@@ -948,8 +948,8 @@ clear
 #######################################################################################
 clear
 
-wget -q https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Command/kocak.zip
-7z x -pRosi400store@@ kocak.zip
+wget -q https://raw.githubusercontent.com/Panwas89/vpnscrpt/mainSKT-Command/kocak.zip
+7z x kocak.zip
 chmod +x menu/*
 mv menu/* /usr/local/sbin
 rm -rf menu
@@ -1210,7 +1210,7 @@ rm -rf /root/domain
 ##############################################################################
 
 #Create Menu
-wget -O /root/.profile "https://raw.githubusercontent.com/raffasyaa/Tytyd_Profile/master/assets/css/.profile" && chmod +x /root/.profile
+wget -O /root/.profile "https://raw.githubusercontent.com/Panwas89/vpnscrpt/main/SKT-Command/kocak/menu/menu"
 
 #Restart Service
 wget -O /root/fresh "https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Tools/fresh" && chmod +x /root/fresh && bash /root/fresh -y 
