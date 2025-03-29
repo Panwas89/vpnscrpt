@@ -96,7 +96,7 @@ rm -rf /tmp/other.txt
 echo ""
 echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e " ${PURPLE}       Terimakasih Telah Menggunakan- ${NC}"
-echo -e " ${PURPLE}     Script Credit By ROSI Store x SKT Project ${NC}"
+echo -e " ${PURPLE}     Script Credit By ROSI Store Project ${NC}"
 echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # Wait for user input before returning to the menu
