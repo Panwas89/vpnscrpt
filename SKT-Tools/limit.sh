@@ -1,5 +1,5 @@
 #!/bin/bash
-REPO="https://raw.githubusercontent.com/rosi606/T4NN3L/main/"
+REPO="https://raw.githubusercontent.com/Panwas89/vpnscrpt/main/"
 wget -q -O /etc/systemd/system/limitvmess.service "${REPO}SKT-Tools/limitvmess.service" && chmod +x limitvmess.service >/dev/null 2>&1
 wget -q -O /etc/systemd/system/limitvless.service "${REPO}SKT-Tools/limitvless.service" && chmod +x limitvless.service >/dev/null 2>&1
 wget -q -O /etc/systemd/system/limittrojan.service "${REPO}SKT-Tools/limittrojan.service" && chmod +x limittrojan.service >/dev/null 2>&1
