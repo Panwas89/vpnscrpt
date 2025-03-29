@@ -1,0 +1,79 @@
+#!/bin/bash 
+# Define colors
+export RED='\033[0;31m'
+export GREEN='\033[0;32m'
+export YELLOW='\033[0;33m'
+export BLUE='\033[0;34m'
+export PURPLE='\033[0;35m'
+export CYAN='\033[0;36m'
+export CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+export LIGHT='\033[0;37m'
+export PINK='\033[0;35m'
+export ORANGE='\033[38;5;208m'
+export PINK_BG='\033[45;1;97m'
+export BIRU='\033[44;1;97m'
+export RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+export NC='\033[0m'
+export INDIGO='\033[38;5;54m'
+export TEAL='\033[38;5;30m'
+export WHITE='\033[1;37m'
+
+# Mengambil informasi sistem
+OS=$(lsb_release -ds)
+RAM=$(free -m | awk '/Mem:/ { print $2 }')
+UPTIME=$(uptime -p)
+IP_VPS=$(hostname -I | awk '{print $1}')
+ISP=$(curl -s ipinfo.io/org)
+DOMAIN=$(cat /etc/data/domain)
+
+# Mengambil informasi IP lengkap dari ipinfo.io
+IP_INFO=$(curl -s "http://ipinfo.io/$IP_VPS/json")
+IP_REGION=$(echo "$IP_INFO" | jq -r '.region')
+IP_COUNTRY=$(echo "$IP_INFO" | jq -r '.country')
+IP_LOC=$(echo "$IP_INFO" | jq -r '.loc')
+
+# Fungsi untuk menampilkan menu
+show_menu() {
+    clear
+    echo -e " ${TEAL}╭═══════════════════════════════════════════════╮${NC}"
+    echo -e " ${TEAL}│${NC}${RED_BG}           ❖ WELCOME TO WARP MENU ❖            ${NC}${TEAL}│${NC}"
+    echo -e " ${TEAL}╰═══════════════════════════════════════════════╯${NC}"
+    echo -e " ╭───────────────────────────────────────────────╮"
+    echo -e " │1.) Install WARP"
+    echo -e " │2.) Uninstall WARP"
+    echo -e " │3.) Change Warp Account Type ( Free, Plus..)"
+    echo -e " │x.) Back to menu"
+    echo -e " ╰───────────────────────────────────────────────╯"
+}
+
+# Function untuk menangani pilihan user
+read_choice() {
+    read -p " ➢ Your choice : " choice
+    case $choice in
+        1)
+            echo "Installing Warp..."
+            bash <(curl -sSL https://raw.githubusercontent.com/hamid-gh98/x-ui-scripts/main/install_warp_proxy.sh)
+            ;;
+        2)
+            echo "Uninstalling Warp..."
+            warp u
+            ;;
+        3)
+            echo "Changing Warp Keys..."
+            warp a
+            ;;
+        x)
+            echo "Exiting..."
+            menu
+            ;;
+        *)
+            echo "Invalid choice, please select a number between 1 and 4."
+            ;;
+    esac
+}
+
+# Loop untuk menampilkan menu dan membaca pilihan
+while true; do
+    show_menu
+    read_choice
+done
