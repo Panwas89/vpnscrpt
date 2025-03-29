@@ -119,7 +119,7 @@ echo -e " ${TEAL} ════════════════════�
 echo -e "    [${BIRU}01${NC}]$WHITE MENU SSH & OVPN ${NC}${TEAL}│${NC} [${BIRU}06${NC}]$WHITE FEATURES ${NC}"
 echo -e "    [${BIRU}02${NC}]$WHITE MENU XRAY       ${NC}${TEAL}│${NC} [${BIRU}07${NC}]$WHITE SPEEDTEST ${NC}"
 echo -e "    [${BIRU}03${NC}]$WHITE MENU TROJAN     ${NC}${TEAL}│${NC} [${BIRU}08${NC}]$WHITE REBUILD VM ${NC}"
-echo -e "    [${BIRU}04${NC}]$WHITE MENU SET WARP   ${NC}${TEAL}│${NC} [${BIRU}09${NC}]$WHITE MONITOR CPU ${NC}"
+echo -e "    [${BIRU}04${NC}]$WHITE COMING SOON     ${NC}${TEAL}│${NC} [${BIRU}09${NC}]$WHITE MONITOR CPU ${NC}"
 echo -e "    [${BIRU}05${NC}]$WHITE MENU BENCHMARK  ${NC}${TEAL}│${NC} [${BIRU}10${NC}]$WHITE UPDATE SCRIPT ${NC}"
 echo -e " ${TEAL} ═══════════════════════════════════════════════${NC}"
 echo -e "    [${BIRU}INFO${NC}]$WHITE Script Expired On : $useexp${NC}"
@@ -141,8 +141,8 @@ case $opt in
         echo -e "${TEAL} ➣ Service Trojan selected${NC}"
         sktaio-tro
         ;;
-    4)
-        echo -e "${TEAL} ➣ Service Warp selected${NC}"
+    -)
+        echo -e "${TEAL} ➣ Service COMING SOON selected${NC}"
         wget -q https://raw.githubusercontent.com/raffasyaa/W4rp/main/warpmenu && bash warpmenu
         ;;
     5)
