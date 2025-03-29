@@ -93,7 +93,7 @@ NUMBER_OF_CLIENTS=$(grep -c -E "^### " "/etc/xray/config.json")
     echo ""
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
-    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 	else
     sed -i '/#vless$/a\#& '"$user $exp"'\
@@ -115,7 +115,7 @@ sed -i "/^#& $user $exp $uuid/d" /etc/xray/.lock.db
     echo " "
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
-    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     systemctl restart xray
     fi  
