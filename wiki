@@ -62,7 +62,7 @@ while true; do
     fi
 
     # Menggunakan curl untuk memeriksa apakah client_name ada dalam file permission.txt
-    permission_file=$(curl -s https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt)
+    permission_file=$(https://raw.githubusercontent.com/Panwas89/1z1n/refs/heads/main/L1cense)
     if echo "$permission_file" | grep -q -i "$client_name"; then
         exp_date=$(echo "$permission_file" | grep -i "$client_name" | awk '{print $4}')
         echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -98,7 +98,7 @@ current_date=$(date '+%d %b %Y')
 current_time="10"
 
 # URL izin
-izinsc="https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt"
+izinsc="https://raw.githubusercontent.com/Panwas89/1z1n/refs/heads/main/L1cense"
 username=$(curl ${izinsc} | grep $MYIP | awk '{print $2}')
 ##################################################
 # Cek Masa Aktif
@@ -147,7 +147,7 @@ echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
 ##################################################
 
 # Repo Installer
-REPO="https://raw.githubusercontent.com/rosi606/T4NN3L/main/"
+REPO="https://raw.githubusercontent.com/Panwas89/vpnscrpt/main/"
 
 ##################################################
 
@@ -159,11 +159,11 @@ echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's 
 
 clear
 # Telegram Bot API details
-TOKEN="7400468502:AAFDoXxOj3CNwasOXezFuq8LZoBNBm4LZxY"
-CHAT_ID="5044190184"
+TOKEN="7914407621:AAGO9kJzXE0FgjBLNoRMBAx52WQC6Y9PuXE"
+CHAT_ID="727253762"
 
-CHATID="5044190184"
-KEY="7400468502:AAFDoXxOj3CNwasOXezFuq8LZoBNBm4LZxY"
+CHATID="727253762"
+KEY="7914407621:AAGO9kJzXE0FgjBLNoRMBAx52WQC6Y9PuXE"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 
 ##################################################
@@ -171,8 +171,8 @@ URL="https://api.telegram.org/bot$KEY/sendMessage"
 # Function to send message to Telegram
 send_telegram_message() {
     MESSAGE=$1
-    BUTTON1_URL="https://t.me/SaputraTech"
-    BUTTON2_URL="https://uptime.skartissh.online"
+    BUTTON1_URL="https://t.me/FRosi46"
+    BUTTON2_URL="https://rasi.serv00.net"
     BUTTON_TEXT1="Admin 😎"
     BUTTON_TEXT2="Server 🐳"
 
