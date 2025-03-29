@@ -18,10 +18,10 @@ clear
 ######################################
 # // USERNAME IZIN IPP
 rm -f /usr/bin/user
-username=$(curl -sS https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt | grep $MYIP | awk '{print $2}')
+username=$(curl -sS https://raw.githubusercontent.com/Panwas89/1z1n/L1cense | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
 rm -f /usr/bin/e
-valid=$(curl -sS https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt | grep $MYIP | awk '{print $3}')
+valid=$(curl -sS https://raw.githubusercontent.com/Panwas89/1z1n/L1censet | grep $MYIP | awk '{print $3}')
 echo "$valid" > /usr/bin/e
 
 clear
