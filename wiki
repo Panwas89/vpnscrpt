@@ -1,0 +1,1265 @@
+#!/bin/bash
+
+# Definisikan warna
+TEAL='\033[38;5;30m'
+GREEN='\e[92;1m'
+RED="\033[1;31m"
+PINK='\033[0;35m'
+YELLOW="\033[33m"
+BLUE="\033[36m"
+FONT="\033[0m"
+GREENBG="\033[42;37m"
+REDBG="\033[41;37m"
+OK="${GREEN}--->${FONT}"
+ERROR="${RED}[ERROR]${FONT}"
+GRAY="\e[1;30m"
+NC='\e[0m'
+
+##################################################
+
+
+echo "Checking VPS"
+if [ "${EUID}" -ne 0 ]; then
+		echo "You need to run this script as root"
+		exit 1
+fi
+if [ "$(systemd-detect-virt)" == "openvz" ]; then
+		echo "OpenVZ is not supported"
+		exit 1
+fi
+
+##################################################
+
+# Load detail OS
+source /etc/os-release
+VERSION=$(echo $VERSION_ID | tr -d '"')
+OS=$ID
+
+##################################################
+
+echo -e "${TEAL} │${NC} ${CYAN_BG} ♻️ Checking Ticket Masuk... ♻️${NC}"
+sleep 3
+clear 
+
+
+# Mendapatkan IP publik pengguna
+user_ip=$(curl -s https://ipinfo.io/ip)
+
+# Meminta nama client dan memvalidasi
+while true; do
+    echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    read -rp $'\033[38;5;208m ❖ Masukkan Nama Client:\033[0m ' client_name
+
+    # Validasi Nama Client (misalnya tidak kosong dan hanya huruf)
+    if [[ -z "$client_name" ]]; then
+        echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo " ❖ Nama Client tidak boleh kosong. Silakan masukkan kembali."
+        continue
+    elif [[ ! "$client_name" =~ ^[A-Za-z]+$ ]]; then
+        echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo " ❖ Nama Client hanya boleh berisi huruf. Silakan masukkan kembali."
+        continue
+    fi
+
+    # Menggunakan curl untuk memeriksa apakah client_name ada dalam file permission.txt
+    permission_file=$(curl -s https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt)
+    if echo "$permission_file" | grep -q -i "$client_name"; then
+        exp_date=$(echo "$permission_file" | grep -i "$client_name" | awk '{print $4}')
+        echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${GREEN} ❖ Succeed, Access Accepted...${NC}"
+        break
+    else
+        echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${RED} ❖ Sorry brother, Your IP not register.${NC}"
+        echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${PINK} ❖ Please Contact Dev : @SaputraTech.${NC}"
+        rm -f /root/wiki # Ganti dengan path yang sesuai ke file installer
+        exit 1
+    fi
+done
+
+
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${NC} 🔥 Sedang Melanjutkan proses...${NC}"
+sleep 2
+
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${NC} 🌐 Mengunduh dan menginstal dependensi...${NC}"
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e ""
+sleep 2
+
+##################################################
+# Ambil IP dan Tanggal
+export IP=$(curl -sS icanhazip.com)
+MYIP=$(curl -sS ipv4.icanhazip.com)
+ipsaya=$(wget -qO- ipinfo.io/ip)
+current_date=$(date '+%d %b %Y')
+current_time="10"
+
+# URL izin
+izinsc="https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt"
+username=$(curl ${izinsc} | grep $MYIP | awk '{print $2}')
+##################################################
+# Cek Masa Aktif
+clear
+start=$(date +%s)
+d1=$(date -d "$valid" +%s)
+d2=$(date -d "$current_date" +%s)
+certificate=$(((d1 - d2) / 86400))
+DATE=$(date +'%Y-%m-%d')
+echo "$username" >/usr/bin/user
+expx=$(curl ${izinsc} | grep $MYIP | awk '{print $3}')
+echo "$expx" >/usr/bin/e
+username=$(cat /usr/bin/user)
+exp=$(cat /usr/bin/e)
+
+# Cek status
+mai="datediff "$Exp" "$DATE""
+Info="(${GREEN}Active${NC})"
+Error="(${RED}Expired${NC})"
+today=$(date -d "0 days" +"%Y-%m-%d")
+Exp1=$(curl ${izinsc} | grep $MYIP | awk '{print $4}')
+if [[ $today < $Exp1 ]]; then
+    sts="${Info}"
+else
+    sts="${Error}"
+fi
+
+# Get necessary system information
+IPVPS=$(curl -s https://ipinfo.io/ip)
+HOSTNAME=$(hostname)
+DOMAIN=$(cat /etc/xray/domain)
+OS=$(lsb_release -d | awk '{print $2,$3,$4}')
+ISP=$(curl -s https://ipinfo.io/org | awk '{print $2,$3,$4}')
+REGION=$(curl -s https://ipinfo.io/region)
+DATE=$(date '+%Y-%m-%d')
+TIME=$(date '+%H:%M:%S')
+
+##################################################
+
+datediff() {
+d1=$(date -d "$1" +%s)
+d2=$(date -d "$2" +%s)
+echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
+}
+
+##################################################
+
+# Repo Installer
+REPO="https://raw.githubusercontent.com/rosi606/T4NN3L/main/"
+
+##################################################
+
+secs_to_human() {
+echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's $((${1} % 60)) seconds"
+}
+
+##################################################
+
+clear
+# Telegram Bot API details
+TOKEN="7400468502:AAFDoXxOj3CNwasOXezFuq8LZoBNBm4LZxY"
+CHAT_ID="5044190184"
+
+CHATID="5044190184"
+KEY="7400468502:AAFDoXxOj3CNwasOXezFuq8LZoBNBm4LZxY"
+URL="https://api.telegram.org/bot$KEY/sendMessage"
+
+##################################################
+
+# Function to send message to Telegram
+send_telegram_message() {
+    MESSAGE=$1
+    BUTTON1_URL="https://t.me/SaputraTech"
+    BUTTON2_URL="https://uptime.skartissh.online"
+    BUTTON_TEXT1="Admin 😎"
+    BUTTON_TEXT2="Server 🐳"
+
+    RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$TOKEN/sendMessage" \
+        -d chat_id="$CHAT_ID" \
+        -d parse_mode="MarkdownV2" \
+        -d text="$MESSAGE" \
+        -d reply_markup='{
+            "inline_keyboard": [
+                [{"text": "'"$BUTTON_TEXT1"'", "url": "'"$BUTTON1_URL"'"}, {"text": "'"$BUTTON_TEXT2"'", "url": "'"$BUTTON2_URL"'"}]
+            ]
+        }')
+
+    # Print the response using jq to pretty-print
+    echo "$RESPONSE" | jq .
+}
+######################################################################################################################################################
+
+######################################################################################################################################################
+
+IPVPS=$(curl -s ipv4.icanhazip.com)
+DOMAIN=$(cat /etc/xray/domain)
+MYIP=$(curl -sS ipv4.icanhazip.com)
+ipsaya=$(curl -sS ipv4.icanhazip.com)
+
+##################################################
+clear
+
+# install wget and curl
+apt -y install wget curl
+apt install -y
+apt upgrade -y
+apt update -y
+apt install curl -y
+apt install wondershaper -y
+apt install fail2ban -y
+dpkg -l | grep fail2ban
+#Install VNSTAT
+apt install vnstat -y
+apt install dropbear -y
+apt install jq -y
+apt install at -y
+apt install zip pwgen openssl netcat socat cron bash-completion -y
+apt install figlet -y
+apt update -y
+apt upgrade -y
+apt dist-upgrade -y
+systemctl enable chronyd
+systemctl restart chronyd
+systemctl enable chrony
+systemctl restart chrony
+chronyc sourcestats -v
+chronyc tracking -v
+apt install ntpdate -y
+ntpdate pool.ntp.org
+apt install sudo -y
+sudo apt-get clean all
+sudo apt-get autoremove -y
+sudo apt-get install -y debconf-utils
+sudo apt-get remove --purge exim4 -y
+sudo apt-get remove --purge ufw firewalld -y
+sudo apt-get install -y --no-install-recommends software-properties-common
+echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
+
+
+##################################################
+
+clear && clear && clear
+clear;clear;clear
+clear
+
+##################################################
+function print_ok() {
+echo -e " ${TEAL}————————————————————————————————————${NC}"
+echo -e " ${PINK} ❏ $1 ${NC}"
+}
+##################################################
+function print_install() {
+echo -e " ${TEAL}————————————————————————————————————${NC}"
+echo -e " ${PINK} ❏ $1 ${NC}"
+sleep 1
+}
+##################################################
+function print_error() {
+echo -e " ${PINK} ❏ $1 ${NC}"
+}
+##################################################
+function print_success() {
+if [[ 0 -eq $? ]]; then
+echo -e " ${TEAL}————————————————————————————————————${NC}"
+echo -e "${Green}   ❏ $1 Instalasi Selesai ❏"
+echo -e " ${TEAL}————————————————————————————————————${NC}"
+sleep 1
+fi
+}
+######################################################################################################################################################
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${NC} 🌐 Mengunduh dan menginstal dependensi...${NC}"
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e ""
+sleep 2
+##################################################
+echo -e "${CYAN} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${NC} 🔥 Sedang melakukan proses instalasi script...${NC}"
+sleep 2
+
+##################################################
+
+# Membuat direktori dan file yang diperlukan
+mkdir -p /etc/xray
+curl -s ifconfig.me > /etc/xray/ipvps
+touch /etc/xray/domain
+mkdir -p /var/log/xray
+chown www-data:www-data /var/log/xray
+chmod 755 /var/log/xray
+touch /var/log/xray/access.log
+touch /var/log/xray/error.log
+mkdir -p /var/lib/saputratech >/dev/null 2>&1
+
+# Menghitung penggunaan memori
+mem_used=0
+mem_total=0
+while IFS=":" read -r a b; do
+    case $a in
+        "MemTotal") mem_total="${b/kB}" ;;
+        "MemFree" | "Buffers" | "Cached" | "SReclaimable")
+            mem_used="$((mem_used - ${b/kB}))" ;;
+        "Shmem") mem_used="$((mem_used + ${b/kB}))" ;;
+    esac
+done < /proc/meminfo
+
+Ram_Usage="$((mem_used / 1024))"
+Ram_Total="$((mem_total / 1024))"
+
+# Mendapatkan informasi sistem
+export tanggal=$(date -d "0 days" +"%d-%m-%Y - %X")
+export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME="\(.*\)"/\1/')
+export Kernel=$(uname -r)
+export Arch=$(uname -m)
+export IP=$(curl -s https://ipinfo.io/ip/)
+
+# Menampilkan informasi
+echo "Tanggal: $tanggal"
+echo "OS: $OS_Name"
+echo "Kernel: $Kernel"
+echo "Arsitektur: $Arch"
+echo "IP: $IP"
+echo "Memori Total: ${Ram_Total}MB"
+echo "Memori Terpakai: ${Ram_Usage}MB"
+
+##################################################
+    # Deteksi OS dan versi
+    source /etc/os-release
+    VERSION=$(echo $VERSION_ID | tr -d '"')
+    OS=$ID
+
+    # Validasi OS yang didukung
+    if [[ "$OS" != "ubuntu" && "$OS" != "debian" ]]; then
+        echo -e "${RED}Unsupported OS. Exiting...${NC}"
+        exit 1
+    fi
+
+    if [[ "$OS" == "debian" && ("$VERSION" == "10" || "$VERSION" == "11") ]]; then
+        echo -e "${GREEN}Debian $VERSION is supported.${NC}"
+    elif [[ "$OS" == "ubuntu" && ("$VERSION" == "20.04" || "$VERSION" == "22.04") ]]; then
+        echo -e "${GREEN}Ubuntu $VERSION is supported.${NC}"
+    else
+        echo -e "${RED}Unsupported version. Exiting...${NC}"
+        exit 1
+    fi
+
+    # Set timezone
+    timedatectl set-timezone Asia/Jakarta
+
+    # Konfigurasi iptables-persistent
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+
+    # Instalasi HAProxy berdasarkan OS
+    SKT_GITHUB="https://raw.githubusercontent.com/raffasyaa/Haproxy/master/"
+    if [[ ${OS} == "ubuntu" ]]; then
+        apt update
+        apt install haproxy -y
+        wget -q -O /usr/sbin/haproxy "${SKT_GITHUB}haproxy/haproxy2.4-ubuntu"
+    elif [[ ${OS} == "debian" ]]; then
+        apt update
+        apt install haproxy -y
+        wget -q -O /usr/sbin/haproxy "${SKT_GITHUB}haproxy/haproxy2.2-debian"
+    fi
+##################################################
+clear
+if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+sudo apt-get install nginx -y
+elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+apt -y install nginx
+else
+echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
+fi
+
+##################################################
+
+clear
+# Function to configure custom domain
+clear
+echo -e "${TEAL} ╭──────────────────────────────────────────────┐${NC}"
+echo -e "${TEAL} │            ❐ ${YELLOW}Configure Custom Domain${NC} ${TEAL}❐       │${NC}"
+echo -e "${TEAL} ╰──────────────────────────────────────────────┘${NC}"
+echo ""
+
+# Prompt for custom domain
+read -p "   ➣ Input Your Domain: " custom_domain
+
+# Validate input
+if [[ -z "$custom_domain" ]]; then
+    echo -e "${RED} ➣ Error: Domain cannot be empty!${NC}"
+    exit 1
+fi
+
+# Save domain configuration
+mkdir -p /var/lib/saputratech
+echo "IP=${custom_domain}" > /var/lib/saputratech/ipvps.conf
+echo "$custom_domain" > /etc/xray/domain
+echo "$custom_domain" > /root/domain
+
+# Set default or custom username
+if [[ -z "$nama" ]]; then
+    echo "SKT AIO PROJECT V1" > /etc/xray/username
+else
+    echo "$nama" > /etc/xray/username
+fi
+
+echo -e "${GREEN} ➣ Custom domain configuration completed successfully!${NC}"
+
+
+##################################################
+clear
+
+
+# Remove old SSL certificates
+rm -f /etc/xray/xray.key
+rm -f /etc/xray/xray.crt
+
+# Get domain name from file
+if [[ -f /root/domain ]]; then
+    domain=$(cat /root/domain)
+else
+    echo "Error: File /root/domain tidak ditemukan!"
+    exit 1
+fi
+
+# Stop web server and nginx
+if systemctl is-active --quiet nginx; then
+    systemctl stop nginx
+fi
+if lsof -i:80 > /dev/null 2>&1; then
+    STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
+    systemctl stop $STOPWEBSERVER
+fi
+
+# Install acme.sh and request SSL certificate
+rm -rf /root/.acme.sh
+mkdir -p /root/.acme.sh
+curl -s https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+chmod +x /root/.acme.sh/acme.sh
+/root/.acme.sh/acme.sh --upgrade --auto-upgrade
+/root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
+~/.acme.sh/acme.sh --installcert -d $domain \
+    --fullchainpath /etc/xray/xray.crt \
+    --keypath /etc/xray/xray.key --ecc
+
+# Set secure permissions for SSL key
+chmod 600 /etc/xray/xray.key
+chmod 644 /etc/xray/xray.crt
+
+print_success "SSL Certificate installed successfully for domain: $domain"
+
+#######################################################################################
+
+rm -rf /etc/vmess/.vmess.db
+rm -rf /etc/vless/.vless.db
+rm -rf /etc/trojan/.trojan.db
+rm -rf /etc/shadowsocks/.shadowsocks.db
+rm -rf /etc/ssh/.ssh.db
+rm -rf /etc/bot/.bot.db
+mkdir -p /etc/bot
+mkdir -p /etc/xray
+mkdir -p /etc/vmess
+mkdir -p /etc/vless
+mkdir -p /etc/trojan
+mkdir -p /etc/shadowsocks
+mkdir -p /etc/ssh
+mkdir -p /usr/bin/xray/
+mkdir -p /var/log/xray/
+mkdir -p /var/www/html
+mkdir -p /etc/saputratech/limit/vmess/ip
+mkdir -p /etc/saputratech/limit/vless/ip
+mkdir -p /etc/saputratech/limit/trojan/ip
+mkdir -p /etc/saputratech/limit/ssh/ip
+mkdir -p /etc/limit/vmess
+mkdir -p /etc/limit/vless
+mkdir -p /etc/limit/trojan
+mkdir -p /etc/limit/ssh
+chmod +x /var/log/xray
+touch /etc/xray/domain
+touch /var/log/xray/access.log
+touch /var/log/xray/error.log
+touch /etc/vmess/.vmess.db
+touch /etc/vless/.vless.db
+touch /etc/trojan/.trojan.db
+touch /etc/shadowsocks/.shadowsocks.db
+touch /etc/ssh/.ssh.db
+touch /etc/bot/.bot.db
+echo "& plughin Account" >>/etc/vmess/.vmess.db
+echo "& plughin Account" >>/etc/vless/.vless.db
+echo "& plughin Account" >>/etc/trojan/.trojan.db
+echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
+echo "& plughin Account" >>/etc/ssh/.ssh.db
+#######################################################################################
+clear
+
+domain=$(cat /etc/xray/domain)
+IPVS=$(cat /etc/xray/ipvps)
+# Buat directory untuk domain socket jika belum ada
+domainSock_dir="/run/xray"
+if ! [ -d "$domainSock_dir" ]; then
+    mkdir "$domainSock_dir"
+fi
+# Ubah kepemilikan directory ke www-data
+chown www-data:www-data "$domainSock_dir"
+latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+# Instal Xray Core versi 1.8.24
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
+wget -O /etc/xray/config.json "${REPO}SKT-Fitur/config.json" >/dev/null 2>&1
+wget -O /etc/systemd/system/runn.service "${REPO}SKT-Tools/runn.service" >/dev/null 2>&1
+
+clear
+curl -s ipinfo.io/city >>/etc/xray/city
+curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
+
+wget -O /etc/haproxy/haproxy.cfg "${REPO}SKT-Fitur/haproxy.cfg" >/dev/null 2>&1
+wget -O /etc/nginx/conf.d/xray.conf "${REPO}SKT-Fitur/xray.conf" >/dev/null 2>&1
+sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
+sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
+curl ${REPO}SKT-Fitur/nginx.conf > /etc/nginx/nginx.conf
+cat /etc/xray/xray.crt /etc/xray/xray.key >> /etc/haproxy/hap.pem
+chmod +x /etc/systemd/system/runn.service
+rm -rf /etc/systemd/system/xray.service.d
+cat >/etc/systemd/system/xray.service <<EOF
+Description=Xray Service
+Documentation=https://github.com
+After=network.target nss-lookup.target
+[Service]
+User=www-data
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/xray run -config /etc/xray/config.json
+Restart=on-failure
+RestartPreventExitStatus=23
+filesNPROC=10000
+filesNOFILE=1000000
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#######################################################################################
+clear
+
+wget -O /etc/pam.d/common-password "${REPO}SKT-Tools/password"
+chmod +x /etc/pam.d/common-password
+DEBIAN_FRONTEND=noninteractive dpkg-reconfigure keyboard-configuration
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/altgr select The default for the keyboard layout"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/compose select No compose key"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/ctrl_alt_bksp boolean false"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/layoutcode string de"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/layout select English"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/modelcode string pc105"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/model select Generic 105-key (Intl) PC"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/optionscode string "
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/store_defaults_in_debconf_db boolean true"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/switch select No temporary switch"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/toggle select No toggling"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/unsupported_config_layout boolean true"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/unsupported_config_options boolean true"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/unsupported_layout boolean true"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/unsupported_options boolean true"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/variantcode string "
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/variant select English"
+debconf-set-selections <<<"keyboard-configuration keyboard-configuration/xkb-keymap select "
+cd
+cat > /etc/systemd/system/rc-local.service <<-END
+[Unit]
+Description=/etc/rc.local
+ConditionPathExists=/etc/rc.local
+[Service]
+Type=forking
+ExecStart=/etc/rc.local start
+TimeoutSec=0
+StandardOutput=tty
+RemainAfterExit=yes
+SysVStartPriority=99
+[Install]
+WantedBy=multi-user.target
+END
+cat > /etc/rc.local <<-END
+exit 0
+END
+chmod +x /etc/rc.local
+systemctl enable rc-local
+systemctl start rc-local.service
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+
+#######################################################################################
+clear
+
+wget raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Tools/limit.sh && chmod +x limit.sh && ./limit.sh
+cd
+wget -q -O /usr/bin/limit-ip "${REPO}SKT-Tools/limit-ip"
+chmod +x /usr/bin/*
+cd /usr/bin
+sed -i 's/\r//' limit-ip
+cd
+clear
+cat >/etc/systemd/system/vmip.service << EOF
+[Unit]
+Description=My
+ProjectAfter=network.target
+[Service]
+WorkingDirectory=/root
+ExecStart=/usr/bin/limit-ip vmip
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+#systemctl restart vmip
+#systemctl enable vmip
+cat >/etc/systemd/system/vlip.service << EOF
+[Unit]
+Description=My
+ProjectAfter=network.target
+[Service]
+WorkingDirectory=/root
+ExecStart=/usr/bin/limit-ip vlip
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+#systemctl restart vlip
+#systemctl enable vlip
+cat >/etc/systemd/system/trip.service << EOF
+[Unit]
+Description=My
+ProjectAfter=network.target
+[Service]
+WorkingDirectory=/root
+ExecStart=/usr/bin/limit-ip trip
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+#systemctl restart trip
+#systemctl enable trip
+mkdir -p /usr/local/saputratech/
+wget -q -O /usr/local/saputratech/udp-mini "${REPO}SKT-Tools/udp-mini"
+chmod +x /usr/local/saputratech/udp-mini
+wget -q -O /etc/systemd/system/udp-mini-1.service "${REPO}SKT-Tools/udp-mini-1.service"
+wget -q -O /etc/systemd/system/udp-mini-2.service "${REPO}SKT-Tools/udp-mini-2.service"
+wget -q -O /etc/systemd/system/udp-mini-3.service "${REPO}SKT-Tools/udp-mini-3.service"
+systemctl disable udp-mini-1
+systemctl stop udp-mini-1
+systemctl enable udp-mini-1
+systemctl start udp-mini-1
+systemctl disable udp-mini-2
+systemctl stop udp-mini-2
+systemctl enable udp-mini-2
+systemctl start udp-mini-2
+systemctl disable udp-mini-3
+systemctl stop udp-mini-3
+systemctl enable udp-mini-3
+systemctl start udp-mini-3
+
+
+#######################################################################################
+clear
+
+wget -q -O /tmp/nameserver "${REPO}SKT-Tools/nameserver" >/dev/null 2>&1
+chmod +x /tmp/nameserver
+bash /tmp/nameserver | tee /root/install.log
+clear
+
+
+#######################################################################################
+clear
+
+wget -q -O /etc/ssh/sshd_config "${REPO}SKT-Tools/sshd" >/dev/null 2>&1
+chmod 700 /etc/ssh/sshd_config
+/etc/init.d/ssh restart
+systemctl restart ssh
+/etc/init.d/ssh status
+
+
+#######################################################################################
+clear
+
+apt -y install vnstat
+/etc/init.d/vnstat restart
+apt -y install libsqlite3-dev
+wget https://raw.githubusercontent.com/helehsemvakwkwk/via/main/vnstat-2.6.tar.gz
+tar zxvf vnstat-2.6.tar.gz
+cd vnstat-2.6
+./configure --prefix=/usr --sysconfdir=/etc && make && make install 
+cd
+chown vnstat:vnstat /var/lib/vnstat -R
+systemctl enable vnstat
+/etc/init.d/vnstat restart
+rm -f /root/vnstat-2.6.tar.gz 
+rm -rf /root/vnstat-2.6
+
+#######################################################################################
+clear
+#install gotop
+gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+curl -sL "$gotop_link" -o /tmp/gotop.deb
+dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+#install bbr
+echo 'fs.file-max = 500000
+net.core.rmem_max = 67108864
+net.core.wmem_max = 67108864
+net.core.netdev_max_backlog = 250000
+net.core.somaxconn = 4096
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 10000 65000
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_max_tw_buckets = 5000
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_mem = 25600 51200 102400
+net.ipv4.tcp_rmem = 4096 87380 67108864
+net.ipv4.tcp_wmem = 4096 65536 67108864
+net.core.rmem_max = 4000000
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.ip_forward = 1
+net.core.default_qdisc = fq
+net.ipv4.tcp_congestion_control = bbr
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1' >> /etc/sysctl.conf
+sysctl -p;
+
+#install toolkit
+apt-get install libio-socket-inet6-perl libsocket6-perl libcrypt-ssleay-perl libnet-libidn-perl perl libio-socket-ssl-perl libwww-perl libpcre3 libpcre3-dev zlib1g-dev dbus iftop zip unzip wget net-tools curl nano sed screen gnupg gnupg1 bc apt-transport-https build-essential dirmngr dnsutils sudo at htop iptables bsdmainutils cron lsof lnav -y
+
+#Set Timezone GMT+7
+timedatectl set-timezone Asia/Jakarta;
+
+#######################################################################################
+# INSTALL DROPBEAR
+# Bash script to install and configure Dropbear
+
+# Define the Dropbear configuration file path
+CONFIG_FILE="/etc/default/dropbear"
+
+# Update the package list
+apt update
+
+# Install Dropbear if it is not installed
+if ! command -v dropbear &> /dev/null; then
+    echo "Installing Dropbear..."
+    apt install -y dropbear
+else
+    echo "Dropbear is already installed."
+fi
+
+# Backup the existing configuration file if it exists
+if [ -f "$CONFIG_FILE" ]; then
+    echo "Backing up existing Dropbear configuration..."
+    cp "$CONFIG_FILE" "${CONFIG_FILE}.bak"
+fi
+
+# Write the new configuration to the file
+echo "Creating new Dropbear configuration..."
+tee "$CONFIG_FILE" > /dev/null <<EOL
+# Dropbear Configuration File
+
+# Enable Dropbear
+NO_START=0
+
+# Default Port for Dropbear
+DROPBEAR_PORT=143
+
+# Additional arguments for Dropbear
+DROPBEAR_EXTRA_ARGS="-p 109"
+
+# Optional banner file
+DROPBEAR_BANNER="/etc/skt-banner.txt"
+
+# Receive window size
+DROPBEAR_RECEIVE_WINDOW=65536
+EOL
+
+# Restart Dropbear to apply the new configuration
+echo "Restarting Dropbear service..."
+systemctl restart dropbear
+
+# Enable Dropbear to start on boot
+systemctl enable dropbear
+
+# Check the status of the Dropbear service
+systemctl status dropbear --no-pager
+
+echo "Dropbear installation and configuration complete."
+#######################################################################################
+clear
+
+if [ -d '/usr/local/ddos' ]; then
+echo; echo; echo "Please un-install the previous version first"
+exit 0
+else
+mkdir /usr/local/ddos
+fi
+clear
+echo "Banner /etc/skt-banner.txt" >>/etc/ssh/sshd_config
+sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/skt-banner.txt"@g' /etc/default/dropbear
+wget -O /etc/skt-banner.txt "${REPO}skt-banner.txt"
+
+#######################################################################################
+clear
+
+wget -O /usr/bin/ws "${REPO}SKT-Tools/ws" >/dev/null 2>&1
+wget -O /usr/bin/tun.conf "${REPO}SKT-Fitur/tun.conf" >/dev/null 2>&1
+wget -O /etc/systemd/system/ws.service "${REPO}SKT-Tools/ws.service" >/dev/null 2>&1
+chmod +x /etc/systemd/system/ws.service
+chmod +x /usr/bin/ws
+chmod 644 /usr/bin/tun.conf
+systemctl disable ws
+systemctl stop ws
+systemctl enable ws
+systemctl start ws
+systemctl restart ws
+wget -q -O /usr/local/share/xray/geosite.dat "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat" >/dev/null 2>&1
+wget -q -O /usr/local/share/xray/geoip.dat "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat" >/dev/null 2>&1
+wget -O /usr/sbin/ftvpn "${REPO}SKT-Tools/ftvpn" >/dev/null 2>&1
+chmod +x /usr/sbin/ftvpn
+netfilter-persistent save
+netfilter-persistent reload
+cd
+apt autoclean -y >/dev/null 2>&1
+apt autoremove -y >/dev/null 2>&1
+
+cd
+rm -rf /root/udp
+mkdir -p /root/udp
+
+# change to time GMT+7
+echo "change to time GMT+7"
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+
+# install udp-custom
+wget -q --show-progress --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1_VyhL5BILtoZZTW4rhnUiYzc4zHOsXQ8' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1_VyhL5BILtoZZTW4rhnUiYzc4zHOsXQ8" -O /root/udp/udp-custom && rm -rf /tmp/cookies.txt
+chmod +x /root/udp/udp-custom
+
+wget -q --show-progress --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1_XNXsufQXzcTUVVKQoBeX5Ig0J7GngGM' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1_XNXsufQXzcTUVVKQoBeX5Ig0J7GngGM" -O /root/udp/config.json && rm -rf /tmp/cookies.txt
+chmod 644 /root/udp/config.json
+
+if [ -z "$1" ]; then
+cat <<EOF > /etc/systemd/system/udp-custom.service
+[Unit]
+Description=UDP Custom by Hamba Allah
+
+[Service]
+User=root
+Type=simple
+ExecStart=/root/udp/udp-custom server
+WorkingDirectory=/root/udp/
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=default.target
+EOF
+else
+cat <<EOF > /etc/systemd/system/udp-custom.service
+[Unit]
+Description=UDP Custom by Hamba Allah
+
+[Service]
+User=root
+Type=simple
+ExecStart=/root/udp/udp-custom server -exclude $1
+WorkingDirectory=/root/udp/
+Restart=always
+RestartSec=2s
+
+[Install]
+WantedBy=default.target
+EOF
+fi
+
+echo start service udp-custom
+systemctl start udp-custom &>/dev/null
+
+echo enable service udp-custom
+systemctl enable udp-custom &>/dev/null
+
+clear
+#######################################################################################
+clear
+
+/etc/init.d/nginx restart
+/etc/init.d/openvpn restart
+/etc/init.d/ssh restart
+/etc/init.d/dropbear restart
+/etc/init.d/fail2ban restart
+/etc/init.d/vnstat restart
+systemctl restart haproxy
+/etc/init.d/cron restart
+systemctl daemon-reload
+systemctl start netfilter-persistent
+systemctl enable --now nginx
+systemctl enable --now xray
+systemctl enable --now rc-local
+systemctl enable --now dropbear
+systemctl enable --now openvpn
+systemctl enable --now cron
+systemctl enable --now haproxy
+systemctl enable --now netfilter-persistent
+systemctl enable --now ws
+systemctl enable --now fail2ban
+systemctl enable --now udp-custom
+history -c
+echo "unset HISTFILE" >> /etc/profile
+cd
+rm -f /root/openvpn
+rm -f /root/key.pem
+rm -f /root/cert.pem
+rm -rf /root/.profile
+rm -rf /usr/bin/security
+
+#################################################################################
+
+clear
+echo "/bin/false" >> /etc/shells
+echo "/usr/sbin/nologin" >> /etc/shells
+
+#################################################################################
+clear
+
+systemctl daemon-reload
+systemctl start netfilter-persistent
+systemctl enable --now rc-local
+systemctl enable --now cron
+systemctl enable --now netfilter-persistent
+systemctl restart nginx
+systemctl restart xray
+systemctl restart cron
+systemctl restart haproxy
+
+clear
+#######################################################################################
+clear
+
+wget -q https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Command/kocak.zip
+7z x -pRosi400store@@ kocak.zip
+chmod +x menu/*
+mv menu/* /usr/local/sbin
+rm -rf menu
+rm -rf kocak.zip
+rm -rf /usr/bin/security
+rm -rf /usr/bin/security
+#######################################################################################
+
+# INSTALL NGINX
+# Nama file konfigurasi
+CONFIG_FILE="/etc/nginx/nginx.conf"
+
+# Fungsi untuk memastikan perintah berhasil
+check_command() {
+    if [ $? -ne 0 ]; then
+        echo "Error: $1 gagal dieksekusi."
+        exit 1
+    fi
+}
+
+echo "Memastikan pengguna adalah root..."
+if [ "$EUID" -ne 0 ]; then
+    echo "Mohon jalankan script ini sebagai root."
+    exit 1
+fi
+
+echo "Memperbarui repository..."
+apt update -y
+check_command "Update repository"
+
+echo "Menginstal NGINX..."
+apt install -y nginx
+check_command "Instalasi NGINX"
+
+echo "Menghentikan layanan NGINX..."
+systemctl stop nginx
+check_command "Hentikan layanan NGINX"
+
+echo "Membuat cadangan file konfigurasi lama (jika ada)..."
+if [ -f "$CONFIG_FILE" ]; then
+    cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
+    check_command "Membuat cadangan file konfigurasi lama"
+    echo "File konfigurasi lama dicadangkan sebagai $CONFIG_FILE.bak"
+fi
+
+echo "Menulis konfigurasi baru ke $CONFIG_FILE..."
+cat > "$CONFIG_FILE" <<EOF
+#NGINX PRO SKT AIO
+user www-data;
+
+worker_processes 1;
+pid /var/run/nginx.pid;
+
+events {
+    multi_accept on;
+    worker_connections 1024;
+}
+
+http {
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 5;
+    gzip_types    text/plain application/x-javascript text/xml text/css;
+    autoindex on;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+    server_tokens off;
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+    client_max_body_size 32M;
+    client_header_buffer_size 8m;
+    large_client_header_buffers 8 8m;
+    fastcgi_buffer_size 8m;
+    fastcgi_buffers 8 8m;
+    fastcgi_read_timeout 600;
+    $(awk '/^set_real_ip_from/ { print; }' <<EOF2
+set_real_ip_from 23.235.32.0/20;
+set_real_ip_from 43.249.72.0/22;
+set_real_ip_from 103.244.50.0/24;
+set_real_ip_from 103.245.222.0/23;
+# Tambahkan semua set_real_ip_from di sini...
+EOF2
+)
+    real_ip_header     CF-Connecting-IP;
+    include /etc/nginx/conf.d/*.conf;
+}
+EOF
+check_command "Menulis konfigurasi baru"
+
+echo "Memeriksa sintaks konfigurasi NGINX..."
+nginx -t
+check_command "Validasi konfigurasi NGINX"
+
+echo "Memulai ulang layanan NGINX..."
+systemctl start nginx
+check_command "Memulai ulang layanan NGINX"
+
+echo "Proses instalasi dan konfigurasi selesai!"
+
+#######################################################################################
+# INSTALL HAPROXY
+# Script untuk menginstal file konfigurasi HAProxy
+CONFIG_PATH="/etc/haproxy/haproxy.cfg"
+HAPROXY_SERVICE="haproxy"
+
+# Cek apakah script dijalankan dengan hak akses root
+if [[ $EUID -ne 0 ]]; then
+   echo "Script ini harus dijalankan sebagai root." 
+   exit 1
+fi
+
+# Update dan install HAProxy jika belum terinstal
+echo "Memastikan HAProxy terinstal..."
+apt-get update
+apt-get install -y haproxy
+
+# Backup konfigurasi HAProxy lama jika ada
+if [[ -f "$CONFIG_PATH" ]]; then
+    echo "Membackup konfigurasi HAProxy lama..."
+    cp "$CONFIG_PATH" "${CONFIG_PATH}.bak_$(date +%F_%T)"
+fi
+
+# Menulis konfigurasi baru ke file
+echo "Menulis konfigurasi baru..."
+cat > "$CONFIG_PATH" << 'EOF'
+# CFG LOADBALANCER
+global       
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 1d
+
+#   log /dev/log local0
+#   log /dev/log local1 notice
+#   log /dev/log local0 info
+    
+    tune.h2.initial-window-size 2147483647
+    tune.ssl.default-dh-param 2048
+
+    pidfile /run/haproxy.pid
+    chroot /var/lib/haproxy
+
+    user haproxy
+    group haproxy
+    daemon
+
+    ssl-default-bind-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+    ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+    ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11
+
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+
+defaults
+    log global
+    mode tcp
+    option dontlognull
+    timeout connect 200ms
+    timeout client  300s
+    timeout server  300s
+    
+frontend multiport
+    mode tcp
+    bind-process 1 2
+    bind *:443 tfo
+    tcp-request inspect-delay 500ms
+    tcp-request content accept if HTTP
+    tcp-request content accept if { req.ssl_hello_type 1 }
+    use_backend recir_http if HTTP 
+    default_backend recir_https
+
+frontend multiports
+    mode tcp
+    bind abns@haproxy-http accept-proxy tfo
+    default_backend recir_https_www
+
+frontend ssl
+    mode tcp
+    bind-process 1
+    bind *:80 tfo
+    bind *:55 tfo
+    bind *:8080 tfo 
+    bind *:8880 tfo
+    bind *:2095 tfo
+    bind *:2082 tfo
+    bind *:2086 tfo
+    bind *:2095 tfo
+    bind abns@haproxy-https accept-proxy ssl crt /etc/haproxy/hap.pem alpn h2,http/1.1 tfo
+    
+    tcp-request inspect-delay 500ms
+    tcp-request content capture req.ssl_sni len 100
+    tcp-request content accept if { req.ssl_hello_type 1 }
+
+    acl chk-02_up hdr(Connection) -i upgrade
+    acl chk-02_ws hdr(Upgrade) -i websocket
+    acl this_payload payload(0,7) -m bin 5353482d322e30
+    acl up-to ssl_fc_alpn -i h2
+
+    use_backend GRUP_FTVPN if up-to
+    use_backend FTVPN if chk-02_up chk-02_ws 
+    use_backend FTVPN if { path_reg -i ^\/(.*) }
+    use_backend BOT_FTVPN if this_payload
+    default_backend CHANNEL_FTVPN
+
+
+backend recir_https_www
+    mode tcp
+    server misssv-bau 127.0.0.1:2223 check
+     
+backend FTVPN
+    mode http
+    server hencet-bau 127.0.0.1:1010 send-proxy check 
+
+backend GRUP_FTVPN
+    mode tcp
+    server hencet-baus 127.0.0.1:1013 send-proxy check
+    
+backend CHANNEL_FTVPN
+    mode tcp
+    balance roundrobin
+    server nonok-bau 127.0.0.1:1194 check
+    server memek-bau 127.0.0.1:1012 send-proxy check
+
+backend BOT_FTVPN
+    mode tcp
+    server misv-bau 127.0.0.1:2222 check
+    
+backend recir_http
+    mode tcp
+    server loopback-for-http abns@haproxy-http send-proxy-v2 check
+    
+backend recir_https
+    mode tcp
+    server loopback-for-https abns@haproxy-https send-proxy-v2 check
+
+EOF
+
+# Reload HAProxy untuk menerapkan konfigurasi baru
+echo "Restarting HAProxy..."
+systemctl restart $HAPROXY_SERVICE
+
+echo "Konfigurasi HAProxy berhasil diinstal dan layanan telah dimulai ulang."
+
+#######################################################################################
+
+cleariii
+history -c
+rm -rf /root/menu
+rm -rf /root/*.zip
+rm -rf /root/*.sh
+rm -rf /root/LICENSE
+rm -rf /root/README.md
+rm -rf /root/domain
+
+##############################################################################
+
+#Create Menu
+wget -O /root/.profile "https://raw.githubusercontent.com/raffasyaa/Tytyd_Profile/master/assets/css/.profile" && chmod +x /root/.profile
+
+#Restart Service
+wget -O /root/fresh "https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Tools/fresh" && chmod +x /root/fresh && bash /root/fresh -y 
+
+#Install Warp
+wget -O /usr/local/sbin/warp "https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Tools/warp" && chmod +x /usr/local/sbin/warp
+
+##############################################################################
+
+# Process message before sending
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN} ♻️ Sabar sayang, sedang proses pengecekan...${NC}${YELLOW}...${NC}"
+sleep 2
+
+# Construct message to be sent to Telegram
+MESSAGE="\`\`\`
+❏━━━━━━━━━━━━━━━━━❏
+🤖 ROSI X SKT PROJECT 🤖
+❏━━━━━━━━━━━━━━━━━❏
+❖ Status      : Active
+❖ Status SC   : Admin Access
+❖ Domain      : $domain    
+❖ Linux OS    : $OS
+❖ ISP         : $ISP
+❖ IP VPS      : $IPVPS
+❖ Area ISP    : $REGION
+❖ Waktu       : $TIME
+❖ Tanggal     : $DATE
+❏━━━━━━━━━━━━━━━━━❏
+👑 Dev @SaputraTech 👑
+❏━━━━━━━━━━━━━━━━━❏
+\`\`\`"
+
+# Send message to Telegram
+send_telegram_message "$MESSAGE"
+
+##############################################################################
+clear
+
+# Installation success message
+sleep 3
+echo -e "[\e[1;31mWARNING\e[0m]➽ AUTOSCRIPT BY ROSI STORE , INSTALL SUCCESSFULLY !"
+
+# Remove installer file
+rm fresh
+rm /root/.profile
+rm /usr/bin/security
+rm wiki~
+rm wiki.1
+rm wiki.2
+rm wiki.3
+rm wiki
