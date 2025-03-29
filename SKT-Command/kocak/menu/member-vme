@@ -1,0 +1,84 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+nama=$(cat /etc/xray/username)
+clear
+
+
+
+# Fungsi untuk menampilkan animasi spinner loading
+function Loading_Succes() {
+  clear
+
+  # Karakter untuk animasi spinner
+  spinner=( '|' '/' '-' '\' )
+
+  # Simulasi animasi spinner
+  for i in {1..3}; do
+    for s in "${spinner[@]}"; do
+      echo -ne "\r\033[1;33m[$s] Check Account Xray... \033[0m"
+      sleep 0.1
+    done
+  done
+
+  # Tampilkan pesan sukses
+  clear
+  echo -e "\033[1;32m🎉 The process completed successfully! ✅\033[0m"
+  sleep 1
+  clear
+}
+ 
+
+function Daftar_Member_Vmess() {
+         echo ""
+         grep -E "^### " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+         printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+         done
+         echo ""
+}
+
+function Daftar_Member_Vless() {
+         echo ""
+         grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+         printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+         done
+         echo ""
+}
+
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${PURPLE}         ❏ LIST XRAY ACCOUNT ❏  ${NC} "
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${WHITE}  USER                         EXPIRED  ${NC}  " 
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${ORANGE}             ACCOUNT VMESS                  ${NC} "
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                                    Daftar_Member_Vmess
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${ORANGE}             ACCOUNT VLESS                  ${NC} "
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                                    Daftar_Member_Vless
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e ""
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${PURPLE}          Terimakasih Telah Menggunakan- ${NC}"
+        echo -e " ${PURPLE}     Script Credit By ROSI Store x SKT Project ${NC}"
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        read -n 1 -s -r -p "    Press any key to back on menu"
+        menu

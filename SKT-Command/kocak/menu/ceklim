@@ -1,0 +1,57 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+clear
+
+touch /root/.system
+data1=( `awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd `)
+for user in "${data1[@]}"
+do
+iplimit1=$(cat /etc/saputratech/limit/ssh/ip/$user)
+if [[ $iplimit1 = "" ]]; then
+echo "2" > /etc/saputratech/limit/ssh/ip/$user
+else
+echo -ne
+fi
+done
+clear
+echo -e " ${TEAL}======================================${NC}"
+echo -e "           ❐ ${PURPLE}USER LOGIN SSH${NC} ❐"
+echo -e " ${TEAL}======================================${NC}"
+echo -e " ${YELLOW} USERNAME      LIMIT IP    LOGIN IP ${NC}"
+mulog=$(cek-ssh)
+data=( `awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd`)
+for user in "${data[@]}"
+do
+cekcek=$(echo -e "$mulog" | grep -wE $user | wc -l)
+if [[ $cekcek -gt 0 ]]; then
+iplimit=$(cat /etc/saputratech/limit/ssh/ip/$user)
+printf "  %-15s %-13s %-19s\n" "${user}" "${iplimit}" "${cekcek}"
+echo "slot" >> /root/.system
+else
+echo > /dev/null
+fi
+echo send_log > /dev/null
+done
+aktif=$(cat /root/.system | wc -l)
+echo -e ""
+echo -e " ${TEAL}======================================${NC}"
+echo -e "              $aktif User ${GREEN}Online${NC}"
+echo -e " ${TEAL}======================================${NC}"
+sed -i "d" /root/.system

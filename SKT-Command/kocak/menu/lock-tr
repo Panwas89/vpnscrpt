@@ -1,0 +1,119 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+
+nama=$(cat /etc/xray/username)
+dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
+
+green() { echo -e "\\033[32;1m${*}\\033[0m"; }
+red() { echo -e "\\033[31;1m${*}\\033[0m"; }
+clear
+
+
+# Fungsi untuk menampilkan animasi spinner loading
+function Loading_Succes() {
+  clear
+
+  # Karakter untuk animasi spinner
+  spinner=( '|' '/' '-' '\' )
+
+  # Simulasi animasi spinner
+  for i in {1..3}; do
+    for s in "${spinner[@]}"; do
+      echo -ne "\r\033[1;33m[$s] Account Locking Process... \033[0m"
+      sleep 0.1
+    done
+  done
+
+  # Tampilkan pesan sukses
+  clear
+  echo -e "\033[1;32m🎉 The process completed successfully! ✅\033[0m"
+  sleep 1
+  clear
+}
+
+function Daftar_Account() {
+grep -E "^#! " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | column -t | sort | uniq
+}
+
+NUMBER_OF_CLIENTS=$(grep -c -E "^### " "/etc/xray/config.json")
+	if [[ ${NUMBER_OF_CLIENTS} == '0' ]]; then
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	echo ""
+	echo -e " ➣${Red} Name Is Wrong !!! ${Xark} "
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	read -n 1 -s -r -p "Press any key to back on menu"
+    menu
+	fi
+	clear
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}            ACCOUNT TROJAN      ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${WHITE}  USER                         EXPIRED  ${NC}  " 
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    grep -E "^#!" "/etc/xray/config.json" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+    printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+    done
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+	read -rp " ➣ Input Username : " user
+    if [ -z $user ]; then
+    menu
+    else
+    Loading_Succes
+    uuid=$(grep -E "^},{" "/etc/xray/config.json" |  grep -wE '"'"${user}"'"' | cut -d " " -f 2 | cut -d '"' -f 2 | uniq )
+	if [ -z $uuid ]; then
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${WHITE} Akun Tidak Ditemukan! ${NC} "
+    echo -e " ${WHITE} Silahkan Input Ulang ${GREEN}User${NC} Dengan Benar... ${NC} "
+    echo ""
+    echo -e " ${WHITE} ↻ Status      ${NC}:${RED} Null ${NC}"
+    echo -e " ${WHITE} ↻ Client Name ${NC}:${YELLOW} $user ${NC}"
+    echo -e " ${WHITE} ↻ Expired On  ${NC}:${RED} Null  ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	else
+    exp=$(grep -wE "^#! $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+    sed -i '/#trojan$/a\#! '"$user $exp $uuid"'' /etc/xray/.lock.db
+    sed -i "/^#! $user $exp/,/^},{/d" /etc/xray/config.json
+    systemctl restart xray > /dev/null 2>&1
+    clear
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "     LOCK TROJAN ACCOUNT SUCCESSFULLY           "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" 
+    echo -e ""
+    echo -e " ${WHITE} ➥ Client Name ${NC}: ${YELLOW}$user ${NC} "
+    echo -e " ${WHITE} ➥ Status      ${NC}: ${RED}LOCKED !! ${NC} "
+    echo -e " ${WHITE} ➥ Expired On  ${NC}: ${GREEN}$exp !! ${NC} "
+    echo -e ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo " "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    fi  
+	fi

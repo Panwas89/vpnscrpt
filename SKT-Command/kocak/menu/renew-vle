@@ -1,0 +1,145 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+clear
+
+nama=$(cat /etc/xray/username)
+
+green() { echo -e "\\033[32;1m${*}\\033[0m"; }
+red() { echo -e "\\033[31;1m${*}\\033[0m"; }
+
+# Fungsi untuk menampilkan animasi spinner loading
+function Loading_Succes() {
+  clear
+
+  # Karakter untuk animasi spinner
+  spinner=( '|' '/' '-' '\' )
+
+  # Simulasi animasi spinner
+  for i in {1..3}; do
+    for s in "${spinner[@]}"; do
+      echo -ne "\r\033[1;33m[$s] Renewal is in process... \033[0m"
+      sleep 0.1
+    done
+  done
+
+  # Tampilkan pesan sukses
+  clear
+  echo -e "\033[1;32m🎉 The process completed successfully! ✅\033[0m"
+  sleep 1
+  clear
+}
+ 
+function Daftar_User_Vless() {
+grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | column -t | sort | uniq
+
+}
+
+
+
+NUMBER_OF_CLIENTS=$(grep -c -E "^#& " "/etc/xray/config.json")
+	if [[ ${NUMBER_OF_CLIENTS} == '0' ]]; then
+		    clear
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${PURPLE}      ❏ RENEW VLESS ACCOUNT ❏ ${NC} "
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	    	echo ""
+	    	echo -e "${RED} Nama Is Wrong !!! ${Xark} "
+		    echo ""
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        read -n 1 -s -r -p "Press any key to back on menu"
+        menu
+	fi
+
+	      clear
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${PURPLE}         ❏ RENEW VLESS ACCOUNT ❏  ${Xark} "
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${WHITE}  USER                         EXPIRED  ${NC}  " 
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	    	echo ""
+         grep -E "^#& " "/etc/xray/config.json" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+         printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+         done
+        echo ""
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        read -rp " ➣ Input Username : " user
+        echo ""
+    if [ -z $user ]; then
+    menu
+    else
+    rm -f /etc/saputratech/limit/vless/ip/${user}
+    rm -f /etc/vless/$user
+    read -p " ➽ Expired (days)   : " masaaktif
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    read -p " ➽ Limit User (GB)  : " Quota
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    read -p " ➽ Limit User (IP)  : " iplim
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+        Loading_Succes
+    exp=$(grep -wE "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
+    mkdir -p /etc/saputratech/limit/vless/ip
+echo ${iplim} >> /etc/saputratech/limit/vless/ip/${user}
+if [ ! -e /etc/vless/ ]; then
+  mkdir -p /etc/vless/
+fi
+
+if [ -z ${Quota} ]; then
+  Quota="0"
+fi
+
+c=$(echo "${Quota}" | sed 's/[^0-9]*//g')
+d=$((${c} * 1024 * 1024 * 1024))
+
+if [[ ${c} != "0" ]]; then
+  echo "${d}" >/etc/vless/${user}
+fi
+    now=$(date +%Y-%m-%d)
+    d1=$(date -d "$exp" +%s)
+    d2=$(date -d "$now" +%s)
+    exp2=$(( (d1 - d2) / 86400 ))
+    exp3=$(($exp2 + $masaaktif))
+    exp4=`date -d "$exp3 days" +"%Y-%m-%d"`
+    sed -i "/#& $user/c\#& $user $exp4" /etc/xray/config.json
+    sed -i "/#& $user/c\#& $user $exp4" /root/akun/vless/.vless.conf
+    systemctl restart xray > /dev/null 2>&1
+    clear
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}     RENEW VLESS ACCOUNT SUCCESSFULLY    ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" 
+    echo -e ""
+    echo -e " ${WHITE} ➥ Client Name ${NC}: ${YELLOW}$user ${NC} "
+    echo -e " ${WHITE} ➥ Limit IP    ${NC}: ${GREEN}$iplim Device${NC} "
+    echo -e " ${WHITE} ➥ Limit QUOTA ${NC}: ${GREEN}$Quota GB ${NC} "
+    echo -e " ${WHITE} ➥ Expired On  ${NC}: ${BLUE}$exp4${NC} "
+    echo -e ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo " "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    systemctl restart xray
+    read -n 1 -s -r -p "   Press any key to back on menu"
+    menu
+    fi

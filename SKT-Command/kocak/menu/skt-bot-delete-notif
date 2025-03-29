@@ -1,0 +1,82 @@
+#!/bin/bash
+# Mendefinisikan warna untuk pesan
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m' 
+clear
+
+red() { echo -e "\\033[32;1m${*}\\033[0m"; }
+ipsaya=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/rosi606/1z1n/main/L1cense.txt"
+checking_sc() {
+  useexp=$(wget -qO- $data_ip | grep $ipsaya | awk '{print $3}')
+  if [[ $date_list < $useexp ]]; then
+    echo -ne
+  else
+    echo -e " ${CYAN}=======================================${NC}"
+    echo -e " ${RED} TERTOLAK MENTAH MENTAH MAMPUS AWOKWOK ${NC}"
+    echo -e " ${CYAN}=======================================${NC}"
+    echo -e ""
+    echo -e " ⛔${RED} PERMISSION DENIED... !${NC}"
+    echo -e " Your IP: ${RED}$ipsaya${NC} Has been Banned"
+    echo -e ""
+    echo -e " 📞 Contact Admin :"
+    echo -e " 🌍 Telegram: https://wa.me/6281931472448"
+    echo -e ""
+    echo -e " ${CYAN}=======================================${NC}"
+    exit
+  fi
+}
+checking_sc
+clear
+NUMBER_OF_CLIENTS=$(grep -c -E "^#bot# " "/etc/bot/bot.db")
+if [[ ${NUMBER_OF_CLIENTS} == '0' ]]; then
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " \e[1;97;101m          DELETE BOT NOTIFIKASI          \e[0m"
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo "    You have no existing clients!"
+    echo ""
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " ${PURPLE}       Terimakasih Telah Menggunakan- ${NC}"
+echo -e " ${PURPLE}Script Credit By ROSI Store x SKT Project ${NC}"
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+read -n 1 -s -r -p "    Press any key to back on menu"
+menu
+fi
+
+clear
+CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+sed -i "/^#bot# $bottken $admin/d" /etc/bot/.bot.db
+rm -rf /etc/bot/.bot.db
+clear
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " \e[1;97;101m      SUCCEED DELETE BOT NOTIFIKASI     \e[0m"
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo " Bot Token    : $KEY"
+echo " ID Telegram  : $CHATID"
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " ${PURPLE}       Terimakasih Telah Menggunakan- ${NC}"
+echo -e " ${PURPLE}Script Credit By ROSI Store x SKT Project ${NC}"
+echo -e "${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+read -n 1 -s -r -p "    Press any key to back on menu"
+menu
