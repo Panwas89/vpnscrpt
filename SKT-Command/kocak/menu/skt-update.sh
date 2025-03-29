@@ -37,8 +37,8 @@ fun_bar() {
 
 # Fungsi untuk mengunduh dan mengekstrak file
 downloadAndExtractMenu() {
-    wget -q https://raw.githubusercontent.com/rosi606/T4NN3L/main/SKT-Command/kocak.zip || { echo "Gagal mengunduh file"; exit 1; }
-    7z x -pRosi400store@@ kocak.zip || { echo "Gagal mengekstrak file"; exit 1; }
+    wget -q https://raw.githubusercontent.com/Panwas89/vpnscrpt/main/SKT-Command/kocak.zip || { echo "Gagal mengunduh file"; exit 1; }
+    7z x -p kocak.zip || { echo "Gagal mengekstrak file"; exit 1; }
     chmod +x menu/*
     mv menu/* /usr/local/sbin
     rm -rf menu
@@ -58,7 +58,7 @@ echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e " ${PURPLE}          Terimakasih Telah Menggunakan- ${NC}"
-echo -e " ${PURPLE}     Script Credit By ROSI Store x SKT Project ${NC}"
+echo -e " ${PURPLE}     Script Credit By ROSI Store Project ${NC}"
 echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 read -n 1 -s -r -p "      Press any key to back on menu"
