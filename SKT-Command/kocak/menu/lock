@@ -1,0 +1,99 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+
+green() { echo -e "\\033[32;1m${*}\\033[0m"; }
+red() { echo -e "\\033[31;1m${*}\\033[0m"; }
+echo -e "\e[32mloading...\e[0m"
+clear
+echo " "
+clear
+
+
+# Fungsi untuk menampilkan animasi spinner loading
+function Loading_Succes() {
+  clear
+
+  # Karakter untuk animasi spinner
+  spinner=( '|' '/' '-' '\' )
+
+  # Simulasi animasi spinner
+  for i in {1..3}; do
+    for s in "${spinner[@]}"; do
+      echo -ne "\r\033[1;33m[$s] Account Locking Process... \033[0m"
+      sleep 0.1
+    done
+  done
+
+  # Tampilkan pesan sukses
+  clear
+  echo -e "\033[1;32m🎉 The process completed successfully! ✅\033[0m"
+  sleep 1
+  clear
+}
+
+
+echo -e " ${CYAN}==========================================${NC}"
+echo -e " ${PURPLE}           LOCK SSH ACCOUNT         ${NC} "
+echo -e " ${CYAN}==========================================${NC}"
+echo -e "${TEAL}───────────────────────────────────────────┐${NC}"
+echo "   USERNAME       EXP DATE         STATUS"
+echo -e "${TEAL}└──────────────────────────────────────────┘${NC}"
+echo -e "${TEAL}┌──────────────────────────────────────────┐${NC}"
+while read expired
+do
+AKUN="$(echo $expired | cut -d: -f1)"
+ID="$(echo $expired | grep -v nobody | cut -d: -f3)"
+exp="$(chage -l $AKUN | grep "Account expires" | awk -F": " '{print $2}')"
+status="$(passwd -S $AKUN | awk '{print $2}' )"
+if [[ $ID -ge 1000 ]]; then
+if [[ "$status" = "P" ]]; then
+ printf "%-17s %2s %-17s %2s \n" "  $AKUN" "$exp   " "UNLOCKED${NORMAL}"
+fi
+fi
+done < /etc/passwd
+JUMLAH="$(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
+echo -e "${TEAL}└──────────────────────────────────────────┘${NC}"
+echo -e ""
+read -p " ➣ Input Username: " username
+
+Loading_Succes
+
+egrep "^$username" /etc/passwd >/dev/null
+if [ $? -eq 0 ]; then
+# proses mengganti passwordnya
+passwd -l $username
+clear
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "       LOCK SSH ACCOUNT SUCCESSFULLY           "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" 
+    echo -e ""
+    echo -e " ${WHITE} ➥ Username  ${NC}: ${YELLOW}$username ${NC} "
+    echo -e " ${WHITE} ➥ Status    ${NC}: ${RED}LOCKED !! ${NC} "
+    echo -e ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo " "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+else
+echo "Username not found on your server."
+    exit 1
+fi

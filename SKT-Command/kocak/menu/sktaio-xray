@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# Mendefinisikan warna untuk pesan
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+clear
+
+#Banner Ssh
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e " ${RED_BG}             XRAY SERVICE            ${NC} "
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e ""
+  echo -e "  1.)  Check Users Login"
+  echo -e "  2.)  List Member"
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e " ${BIRU_BG}              XRAY VMESS             ${NC}"
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e "  3.)  Create Account Vmess"
+  echo -e "  4.)  Trial Account Vmess"
+  echo -e "  5.)  Delete Account Vmess"
+  echo -e "  6.)  Renew Account Vmess"
+  echo -e "  7.)  Check Config Account"
+  echo -e "  8.)  Recovery Account"
+  echo -e "  9.)  Edit Limit IP Account"
+  echo -e "  10.) Edit Limit Bandwidth Account"
+  echo -e "  11.) Lock Account"
+  echo -e "  12.) Unlock Account"
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e " ${BIRU_BG}              XRAY VLESS             ${NC}"
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e "  13.)  Create Account Vless"
+  echo -e "  14.)  Trial Account Vless"
+  echo -e "  15.)  Delete Account Vless"
+  echo -e "  16.)  Renew Account Vless"
+  echo -e "  17.)  Check Config Account"
+  echo -e "  18.)  Recovery Account"
+  echo -e "  19.)  Edit Limit IP Account"
+  echo -e "  20.)  Edit Limit Bandwidth Account"
+  echo -e "  21.)  Lock Account"
+  echo -e "  22.)  Unlock Accounts"
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e "  x.) Back to Menu"
+  echo -e " "
+  echo -e " ${CYAN}======================================${NC}"
+  echo -e " "
+read -p " ➣ Your Choice: " Ltt
+case $Ltt in
+1) clear ; cek-vme ;;
+2) clear ; member-vme ;;
+3) clear ; add-vme ;;
+4) clear ; trial-vme ;;
+5) clear ; del-vme;;
+6) clear ; renew-vme ;;
+7) clear ; check-vme ;;
+8) clear ; recover-vm ;;
+9) clear ; ganti-ip-vmess ;;
+10) clear ; change-vmess-qouta ;;
+11) clear ; lock-vm ;;
+12) clear ; unlock-vm ;;
+13) clear ; add-vle;;
+14) clear ; trial-vle;;
+15) clear ; del-vle ;;
+16) clear ; renew-vle ;;
+17) clear ; check-vle ;;
+18) clear ; recover-vl ;;
+19) clear ; ganti-ip-vless ;;
+20) clear ; change-vless-qouta ;;
+21) clear ; lock-vl ;;
+22) clear ; unlock-vl;;
+x) menu ;;
+*) sktaio-xray ;;
+esac

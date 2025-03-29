@@ -1,0 +1,110 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+
+nama=$(cat /etc/xray/username)
+dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
+
+green() { echo -e "\\033[32;1m${*}\\033[0m"; }
+red() { echo -e "\\033[31;1m${*}\\033[0m"; }
+clear
+
+# Menampilkan pesan Sukses setelah animasi selesai
+function Loading_Succes() {
+clear
+echo -e  "\033[5;32mSucces\033[0m"
+sleep 1
+clear
+}
+
+function Daftar_Account() {
+grep -E "^### " "/etc/xray/.lock.db" | cut -d ' ' -f 2-3 | column -t | sort | uniq
+}
+
+
+
+
+NUMBER_OF_CLIENTS=$(grep -c -E "^### " "/etc/xray/.lock.db")
+	if [[ ${NUMBER_OF_CLIENTS} == '0' ]]; then
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	echo ""
+	echo -e " ➣${RED} Name Is Wrong !!! ${NC} "
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	read -n 1 -s -r -p "Press any key to back on menu"
+    menu
+	fi
+	clear
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}          ACCOUNT VMESS LOCKED     ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${WHITE}  USER                         EXPIRED  ${NC}  " 
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    grep -E "^### " "/etc/xray/.lock.db" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+    printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+    done
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+	read -rp " ➣ Input Username : " user
+    if [ -z $user ]; then
+    sktaio-xray
+    else
+    Loading_Succes
+    uuid=$(grep -E "^###" "/etc/xray/.lock.db" |  grep -i "${user}" | cut -d " " -f 4)
+    exp=$(grep -E "^###" "/etc/xray/.lock.db" |  grep -i "${user}" | cut -d " " -f 3)
+	if [ -z $uuid ]; then
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${WHITE} Akun Tidak Ditemukan! ${NC} "
+    echo -e " ${WHITE} Silahkan Input Ulang ${GREEN}User${NC} Dengan Benar... ${NC} "
+    echo ""
+    echo -e " ${WHITE} ↻ Status      ${NC}:${RED} Null ${NC}"
+    echo -e " ${WHITE} ↻ Client Name ${NC}:${YELLOW} $user ${NC}"
+    echo -e " ${WHITE} ↻ Expired On  ${NC}:${RED} Null  ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+	else
+    sed -i '/#vmess$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+    sed -i '/#vmessgrpc$/a\### '"$user $exp"'\
+},{"id": "'""$uuid""'","alterId": '"0"',"email": "'""$user""'"' /etc/xray/config.json
+sed -i "/^### $user $exp $uuid/d" /etc/xray/.lock.db
+    systemctl restart xray > /dev/null 2>&1
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "      UNLOCK VMESS ACCOUNT SUCCESSFULLY           "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" 
+    echo -e ""
+    echo -e " ${WHITE} ➥ Client Name ${NC}: ${YELLOW}$user ${NC} "
+    echo -e " ${WHITE} ➥ Status      ${NC}: ${GREEN}UNLOCKED !! ${NC} "
+    echo -e " ${WHITE} ➥ Expired On  ${NC}: ${BLUE}$exp !! ${NC} "
+    echo -e ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo " "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    systemctl restart xray
+    fi  
+	fi

@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# Mendefinisikan warna untuk pesan
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Latar belakang cyan cerah dengan teks putih
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Latar belakang pink cerah dengan teks putih
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+
+nama=$(cat /etc/xray/username)
+clear
+
+function Loading_Succes() {
+clear
+  # Karakter untuk animasi spinner
+  spinner=( '|' '/' '-' '\' )
+
+  # Simulasi animasi spinner
+  for i in {1..3}; do
+    for s in "${spinner[@]}"; do
+      echo -ne "\r\033[1;33m[$s] Change IP Limit process... \033[0m"
+      sleep 0.1
+    done
+  done
+
+  # Tampilkan pesan sukses
+  clear
+  echo -e "\033[1;32m🎉 The process completed successfully! ✅\033[0m"
+  sleep 1
+  clear
+}
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}          CHANGE LIMIT IP TROJAN      ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${WHITE}  USER                         EXPIRED  ${NC}  " 
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    grep -E "^#!" "/etc/xray/config.json" | cut -d ' ' -f 2-3 | sort | uniq | while read -r user exp; do
+    printf "  %-28s %s\n" "$user" "$exp"  # Rata menggunakan printf
+    done
+echo ""
+read -p " ➣ Input Username : " user
+limit_file="/etc/saputratech/limit/trojan/ip/${user}"
+
+# Validasi apakah file batasan IP sudah ada
+if [ -e "$limit_file" ]; then
+  current_iplimit=$(cat "$limit_file")
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${ORANGE} Akun Ditemukan! ${NC} "
+    echo ""
+    echo -e " ${WHITE} ↻ Client Name    ${NC}: ${YELLOW} $user ${NC}"
+    echo -e " ${WHITE} ↻ Limit IP Saat Ini ${NC}: ${GREEN}$current_iplimit${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    read -p " ➣ Input New Limit IP : " new_iplimit
+    echo -e ""
+    Loading_Succes
+
+  # Validasi jika masukan kosong
+  if [ -z "$new_iplimit" ]; then
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " 〄${RED} Wrong Input Methode ${NC} "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  else
+    echo "$new_iplimit" > "$limit_file"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "      CHANGE NEW LIMIT BW SUCCESSFULLY           "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" 
+    echo -e ""
+   echo -e " ${WHITE} ➥ Client Name  ${NC}: ${YELLOW}$user ${NC} "
+    echo -e " ${WHITE} ➥ New Limit IP ${NC}: ${GREEN}$new_iplimit ${NC} "
+    echo -e ""
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo " "
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
+    echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+  fi
+else
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " ${RED} Sorry, Brother ! ${NC} "
+echo -e " ${PURPLE} "
+echo " File Limit Ip Untuk Nama ${BLUE}$user${NC} , Tidak Di Temukan !."
+echo " Mohon Untuk segera Settings, Terlebih Dahulu Di Menu-"
+echo " ${ORANGE}Change Limit Xray${NC} "
+echo -e "${NC} "
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+fi

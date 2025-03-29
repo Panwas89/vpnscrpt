@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Bash script to install and configure Dropbear
+
+# Define the Dropbear configuration file path
+CONFIG_FILE="/etc/default/dropbear"
+
+# Update the package list
+apt update
+
+# Install Dropbear if it is not installed
+if ! command -v dropbear &> /dev/null; then
+    echo "Installing Dropbear..."
+    apt install -y dropbear
+else
+    echo "Dropbear is already installed."
+fi
+
+# Backup the existing configuration file if it exists
+if [ -f "$CONFIG_FILE" ]; then
+    echo "Backing up existing Dropbear configuration..."
+    cp "$CONFIG_FILE" "${CONFIG_FILE}.bak"
+fi
+
+# Write the new configuration to the file
+echo "Creating new Dropbear configuration..."
+tee "$CONFIG_FILE" > /dev/null <<EOL
+# Dropbear Configuration File
+
+# Enable Dropbear
+NO_START=0
+
+# Default Port for Dropbear
+DROPBEAR_PORT=143
+
+# Additional arguments for Dropbear
+DROPBEAR_EXTRA_ARGS="-p 109"
+
+# Optional banner file
+DROPBEAR_BANNER="/etc/skt-banner.txt"
+
+# Receive window size
+DROPBEAR_RECEIVE_WINDOW=65536
+EOL
+
+# Restart Dropbear to apply the new configuration
+echo "Restarting Dropbear service..."
+systemctl restart dropbear
+
+# Enable Dropbear to start on boot
+systemctl enable dropbear
+
+# Check the status of the Dropbear service
+systemctl status dropbear --no-pager
+
+echo "Dropbear installation and configuration complete."

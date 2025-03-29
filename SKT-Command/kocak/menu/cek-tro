@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# Define colors for messages
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BIRU='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BG='\033[46;1;97m'   # Light cyan background with white text
+LIGHT='\033[0;37m'
+PINK='\033[0;35m'
+ORANGE='\033[38;5;208m'
+PINK_BG='\033[45;1;97m'
+BIRU_BG='\033[44;1;97m'
+RED_BG='\033[41;1;97m'   # Light pink background with white text
+NC='\033[0m'
+INDIGO='\033[38;5;54m'
+TEAL='\033[38;5;30m'
+WHITE='\033[1;37m'
+
+clear
+
+# Function to format bytes to human-readable size
+function con() {
+    local -i bytes=$1
+    if [[ $bytes -lt 1024 ]]; then
+        echo "${bytes}B"
+    elif [[ $bytes -lt 1048576 ]]; then
+        echo "$(( (bytes + 1023) / 1024 ))KB"
+    elif [[ $bytes -lt 1073741824 ]]; then
+        echo "$(( (bytes + 1048575) / 1048576 ))MB"
+    else
+        echo "$(( (bytes + 1073741823) / 1073741824 ))GB"
+    fi
+}
+
+# Clear temporary files
+echo -n > /tmp/other.txt
+
+# Collect data from the configuration file
+data=( $(grep '^#!' /etc/xray/config.json | cut -d ' ' -f 2 | sort | uniq) )
+
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${PURPLE}        ❏ CHECK TROJAN QUOTA USAGE ❏ ${NC}"
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${RED}    USER \t     USAGE      LOGIN ${NC}"
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+# Loop through each account
+for akun in "${data[@]}"; do
+    if [[ -z "$akun" ]]; then
+        akun="tidakada"
+    fi
+
+    # Temporary file to store IP addresses
+    echo -n > /tmp/iptrojan.txt
+
+    # Collect IP addresses from access log
+    data2=( $(tail -n 500 /var/log/xray/access.log | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | sort | uniq) )
+
+    # Process each IP address
+    for ip in "${data2[@]}"; do
+        jum=$(grep -w "$akun" /var/log/xray/access.log | tail -n 500 | cut -d " " -f 3 | sed 's/tcp://g' | cut -d ":" -f 1 | grep -w "$ip" | sort | uniq)
+        if [[ "$jum" = "$ip" ]]; then
+            echo "$jum" >> /tmp/iptrojan.txt
+        else
+            echo "$ip" >> /tmp/other.txt
+        fi
+        jum2=$(cat /tmp/iptrojan.txt)
+        sed -i "/$jum2/d" /tmp/other.txt > /dev/null 2>&1
+    done
+
+    # Process user usage data
+    jum=$(cat /tmp/iptrojan.txt)
+    if [[ -n "$jum" ]]; then
+        iplimit=$(cat /etc/saputratech/limit/trojan/ip/${akun})
+        jum2=$(wc -l < /tmp/iptrojan.txt)
+        byte=$(cat /etc/trojan/${akun})
+        lim=$(con ${byte})
+        wey=$(cat /etc/limit/trojan/${akun})
+        gb=$(con ${wey})
+        lastlogin=$(grep -w "$akun" /var/log/xray/access.log | tail -n 500 | cut -d " " -f 2 | tail -1)
+
+        # Output user data
+        printf " ${ORANGE}%-20s${NC} %-10s %-40s\n" "${akun}" "${gb}" "${jum2}"
+    fi 
+
+    # Clean up temporary files
+    rm -rf /tmp/iptrojan.txt
+done
+
+# Clean up other.txt
+rm -rf /tmp/other.txt
+
+echo ""
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e " ${PURPLE}       Terimakasih Telah Menggunakan- ${NC}"
+echo -e " ${PURPLE}     Script Credit By ROSI Store Project ${NC}"
+echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+# Wait for user input before returning to the menu
+read -n 1 -s -r -p " Tekan tombol apa saja untuk kembali ke menu"
+menu

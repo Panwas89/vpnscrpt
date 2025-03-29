@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Membersihkan layar
+clear
+
+# Warna untuk dekorasi
+GREEN="\033[0;32m"
+CYAN="\033[0;36m"
+YELLOW="\033[0;33m"
+RESET="\033[0m"
+PURPLE='\033[0;35m'
+WHITE='\033[1;37m'
+TEAL='\033[38;5;30m'
+
+# Header
+echo -e "${CYAN}┌──────────────────────────────────────────────┐${NC}"
+echo -e "${CYAN}│             ${WHITE}🌐 Service & Ports 🌐${RESET}${CYAN}            │${NC}"
+echo -e "${CYAN}├──────────────────────────────────────────────┤${NC}"
+
+# Daftar layanan dan port
+ echo -e "${CYAN}│${RESET}  ❐ Open SSH                : ${GREEN}22${RESET}              ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ Dropbear                : ${GREEN}143${RESET}             ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ SSH Websocket SSL       : ${GREEN}443${RESET}             ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ SSH Websocket NTLS      : ${GREEN}80${RESET}              ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ OpenVPN TCP             : ${GREEN}443, 1194${RESET}       ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ OpenVPN UDP             : ${GREEN}2200${RESET}            ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ XRAY Vmess              : ${GREEN}443${RESET}             ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ XRAY Vless              : ${GREEN}443${RESET}             ${CYAN}│${RESET}"
+ echo -e "${CYAN}│${RESET}  ❐ XRAY Trojan             : ${GREEN}443${RESET}             ${CYAN}│${RESET}"
+
+# Footer
+echo -e "${CYAN}├──────────────────────────────────────────────┤${NC}"
+echo -e "${CYAN}│  ${WHITE}🚀 Press any key to return to the menu 🚀${RESET}${CYAN}   │${NC}"
+echo -e "${CYAN}└──────────────────────────────────────────────┘${NC}"
+echo ""
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
+        echo -e " ${PURPLE}      echo -e " ${PURPLE}     Script Credit By ROSI Store Project ${NC}" ${NC}"
+        echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# Menunggu input dari pengguna
+read -n 1 -s -r -p ""
+menu
