@@ -98,7 +98,7 @@ current_date=$(date '+%d %b %Y')
 current_time="10"
 
 # URL izin
-izinsc="https://raw.githubusercontent.com/Panwas89/1z1n/refs/heads/main/L1cense"
+izinsc="https://raw.githubusercontent.com/Panwas89/1z1n/main/L1cense"
 username=$(curl ${izinsc} | grep $MYIP | awk '{print $2}')
 ##################################################
 # Cek Masa Aktif
