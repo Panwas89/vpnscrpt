@@ -101,7 +101,7 @@ Loading_Succes
     echo " "
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e " ${PURPLE}        Terimakasih Telah Menggunakan- ${NC}"
-    echo -e " ${PURPLE} Script Credit By ROSI Store x SKT Project ${NC}"
+    echo -e " ${PURPLE} Script Credit By ROSI Store Project ${NC}"
     echo -e " ${TEAL}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
       # Hapus entri lama dan tambahkan yang baru ke dalam database
